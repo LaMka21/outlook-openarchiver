@@ -8,6 +8,9 @@ This is the Outlook counterpart to the excellent [thunderbird-openarchiver](http
 
 ---
 
+## Screenshot
+![Open Archiver — Outlook task pane: sign in, search results, open email](docs/screenshot.png)
+
 ## Features
 - 🔎 Full‑text search of the archive from a task pane inside Outlook
 - 📧 Open any archived message — headers, HTML/plain body (rendered in a sandboxed iframe), and attachments as downloads
