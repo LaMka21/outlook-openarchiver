@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#2563eb" />
+  <title>Archív Ravafol</title>
+  <link rel="manifest" href="webmanifest.json" />
+  <link rel="stylesheet" href="taskpane.css" />
+  <style>
+    /* standalone: trochu väčší, vycentrovaný na šírku */
+    body { max-width: 780px; margin: 0 auto; }
+    header { position: sticky; top: 0; background: #fff; z-index: 5; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="title">📨 Archív Ravafol</span>
+    <button id="logoutBtn" class="link hidden">Odhlásiť</button>
+  </header>
+
+  <section id="loginView" class="view">
+    <p class="muted">Prihlás sa svojím archívnym účtom.</p>
+    <input id="apiBase" type="text" placeholder="URL servera" />
+    <input id="email" type="email" placeholder="email" autocomplete="username" />
+    <input id="password" type="password" placeholder="heslo" autocomplete="current-password" />
+    <button id="loginBtn" class="primary">Prihlásiť</button>
+    <div id="loginError" class="error"></div>
+  </section>
+
+  <section id="searchView" class="view hidden">
+    <form id="searchForm">
+      <input id="query" type="search" placeholder="Hľadať v archíve…" autocomplete="off" />
+      <button class="primary" type="submit">Hľadať</button>
+    </form>
+    <div id="status" class="muted"></div>
+    <ul id="results"></ul>
+  </section>
+
+  <section id="viewerView" class="view hidden">
+    <button id="backBtn" class="link">← Späť na výsledky</button>
+    <div id="emailMeta"></div>
+    <div id="emailBody"></div>
+    <div id="attachments"></div>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

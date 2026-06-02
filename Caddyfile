@@ -1,0 +1,21 @@
+# Example reverse proxy for outlook-openarchiver.
+# One origin = static files + /v1 proxied to Open Archiver  ->  no CORS to configure.
+# Replace archive.example.com and YOUR_OA_BACKEND_HOST. Caddy obtains the TLS cert automatically.
+
+archive.example.com {
+	encode gzip
+
+	# Open Archiver REST API
+	handle /v1/* {
+		reverse_proxy YOUR_OA_BACKEND_HOST:4000
+	}
+
+	# static files (add-in + standalone web app)
+	handle {
+		root * /var/www/outlook-openarchiver/public
+		file_server
+	}
+}
+
+# Behind nginx / Nginx Proxy Manager instead? Terminate TLS there and forward the
+# domain to a plain-HTTP listener that serves public/ and proxies /v1 the same way.
