@@ -124,10 +124,9 @@ async function openEmail(id) {
     const r1 = await api(`/v1/archived-emails/${encodeURIComponent(id)}`);
     if (!r1.ok) throw new Error('E-mail sa nenašiel.');
     const meta = await r1.json();
-    const path = meta.storagePath || meta.storage_path || meta.email?.storagePath;
-    const r2 = await api(`/v1/storage/download?path=${encodeURIComponent(path)}`);
-    if (!r2.ok) throw new Error('Obsah e-mailu sa nepodarilo stiahnuť.');
-    const email = await new PostalMime().parse(await r2.arrayBuffer());
+    const rawData = meta.raw?.data || meta.email?.raw?.data;
+    if (!rawData) throw new Error('Obsah e-mailu sa nenašiel.');
+    const email = await new PostalMime().parse(new Uint8Array(rawData));
     renderEmail(email);
   } catch (e) { $('emailMeta').innerHTML = `<span class="error">${esc(e.message)}</span>`; }
 }

@@ -145,17 +145,13 @@ async function openEmail(id) {
   $('emailMeta').innerHTML = '<span class="muted">Načítavam e-mail…</span>';
   $('emailBody').innerHTML = ''; $('attachments').innerHTML = '';
   try {
-    // 1) detail -> storagePath
+    // detail vracia aj surové .eml bajty ako `raw` (server ich číta zo storage) — rovnako ako web UI
     const r1 = await api(`/v1/archived-emails/${encodeURIComponent(id)}`);
     if (!r1.ok) throw new Error('E-mail sa nenašiel.');
     const meta = await r1.json();
-    const path = meta.storagePath || meta.storage_path || meta.email?.storagePath;
-    // 2) stiahni .eml
-    const r2 = await api(`/v1/storage/download?path=${encodeURIComponent(path)}`);
-    if (!r2.ok) throw new Error('Obsah e-mailu sa nepodarilo stiahnuť.');
-    const buf = await r2.arrayBuffer();
-    // 3) parse MIME
-    const email = await new PostalMime().parse(buf);
+    const rawData = meta.raw?.data || meta.email?.raw?.data;
+    if (!rawData) throw new Error('Obsah e-mailu sa nenašiel v odpovedi.');
+    const email = await new PostalMime().parse(new Uint8Array(rawData));
     renderEmail(email);
   } catch (e) {
     $('emailMeta').innerHTML = `<span class="error">${esc(e.message)}</span>`;
