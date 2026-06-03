@@ -15,6 +15,7 @@ window.addEventListener('DOMContentLoaded', () => {
   $('logoutBtn').onclick = doLogout;
   $('searchForm').onsubmit = (e) => { e.preventDefault(); doSearch(); };
   $('backBtn').onclick = () => show('searchView');
+  $('toggleFilters').onclick = () => $('filters').classList.toggle('hidden');
   if (TOKEN) { show('searchView'); $('logoutBtn').classList.remove('hidden'); $('query').focus(); }
   else show('loginView');
 });
@@ -54,12 +55,25 @@ async function doLogin() {
 
 function doLogout() { TOKEN = ''; save(); $('logoutBtn').classList.add('hidden'); show('loginView'); }
 
+function buildFilters() {
+  const f = {};
+  const ff = $('fFrom').value.trim().toLowerCase(); if (ff) f.from = ff;
+  const ft = $('fTo').value.trim().toLowerCase(); if (ft) f.to = ft;
+  const df = $('fDateFrom').value, dt = $('fDateTo').value;
+  if (df || dt) { f.timestamp = {}; if (df) f.timestamp.gte = Date.parse(df + 'T00:00:00'); if (dt) f.timestamp.lte = Date.parse(dt + 'T23:59:59'); }
+  return f;
+}
+
 async function doSearch() {
   const q = $('query').value.trim();
-  if (!q) return;
+  const filters = buildFilters();
+  const hasF = Object.keys(filters).length > 0;
+  if (!q && !hasF) { $('status').textContent = 'Zadaj hľadaný výraz alebo filter.'; return; }
   $('status').textContent = 'Hľadám…'; $('results').innerHTML = '';
   try {
-    const res = await api(`/v1/search?keywords=${encodeURIComponent(q)}&page=1&limit=25`);
+    let url = `/v1/search?keywords=${encodeURIComponent(q)}&page=1&limit=25`;
+    if (hasF) url += `&filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    const res = await api(url);
     if (!res.ok) { $('status').textContent = 'Chyba vyhľadávania.'; return; }
     const data = await res.json();
     lastResults = data.hits || [];

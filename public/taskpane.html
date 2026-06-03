@@ -29,6 +29,15 @@
       <input id="query" type="search" placeholder="Hľadať v archíve…" autocomplete="off" />
       <button class="primary" type="submit">Hľadať</button>
     </form>
+    <button type="button" id="toggleFilters" class="link" style="margin-top:4px">+ Filtre</button>
+    <div id="filters" class="hidden" style="margin-top:6px">
+      <input id="fFrom" type="text" placeholder="Od (email)" />
+      <input id="fTo" type="text" placeholder="Komu (email)" />
+      <div style="display:flex;gap:6px">
+        <input id="fDateFrom" type="date" title="Dátum od" />
+        <input id="fDateTo" type="date" title="Dátum do" />
+      </div>
+    </div>
     <div id="status" class="muted"></div>
     <ul id="results"></ul>
   </section>

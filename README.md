@@ -13,6 +13,7 @@ This is the Outlook counterpart to the excellent [thunderbird-openarchiver](http
 
 ## Features
 - 🔎 Full‑text search of the archive from a task pane inside Outlook
+- 🎚️ Optional filters — by sender, recipient and date range (collapsible panel)
 - 📧 Open any archived message — headers, HTML/plain body (rendered in a sandboxed iframe), and attachments as downloads
 - 👤 **Per‑user**: signs in with the user's own Open Archiver account (JWT), so each person sees only what their role allows
 - 🌐 **Bonus standalone web app / PWA** — same search & viewer at the site root, usable on mobile and desktop without Outlook
