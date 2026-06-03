@@ -100,6 +100,7 @@ Just open `https://archive.example.com/` in any browser, sign in, search. On mob
 - Inspired by [thunderbird-openarchiver](https://github.com/lanzalibre/thunderbird-openarchiver).
 - Built for [Open Archiver](https://github.com/LogicLabs-OU/OpenArchiver).
 - MIME parsing by [postal-mime](https://github.com/postalsys/postal-mime).
+- App icon: the [Open Archiver](https://github.com/LogicLabs-OU/OpenArchiver) project logo.
 
 ## License
 AGPL‑3.0‑or‑later — see [LICENSE](LICENSE).
