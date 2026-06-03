@@ -172,9 +172,9 @@ function renderEmail(email) {
   const body = $('emailBody');
   if (email.html) {
     const iframe = document.createElement('iframe');
-    iframe.setAttribute('sandbox', 'allow-same-origin'); // skripty vypnuté (bezpečné), same-origin kvôli auto-výške
+    iframe.setAttribute('sandbox', ''); // untrusted HTML e-mailu -> opaque origin, ŽIADNE skripty ani same-origin (ochrana JWT). NEpridávať allow-same-origin/allow-scripts!
     iframe.srcdoc = email.html;
-    iframe.onload = () => { try { iframe.style.height = (iframe.contentDocument.documentElement.scrollHeight + 24) + 'px'; } catch (_) { iframe.style.height = '85vh'; } };
+    iframe.style.height = '85vh';        // vysoké pevné okno; auto-fit cez contentDocument by vyžadoval same-origin = bezpečnostné riziko
     body.appendChild(iframe);
   } else {
     const pre = document.createElement('pre');
