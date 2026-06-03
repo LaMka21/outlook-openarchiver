@@ -172,8 +172,9 @@ function renderEmail(email) {
   const body = $('emailBody');
   if (email.html) {
     const iframe = document.createElement('iframe');
-    iframe.setAttribute('sandbox', '');               // bez skriptov, bez prístupu k rodičovi
+    iframe.setAttribute('sandbox', 'allow-same-origin'); // skripty vypnuté (bezpečné), same-origin kvôli auto-výške
     iframe.srcdoc = email.html;
+    iframe.onload = () => { try { iframe.style.height = (iframe.contentDocument.documentElement.scrollHeight + 24) + 'px'; } catch (_) { iframe.style.height = '85vh'; } };
     body.appendChild(iframe);
   } else {
     const pre = document.createElement('pre');
