@@ -6,6 +6,8 @@ import PostalMime from './vendor/postal-mime.js';
 let API = '';          // base URL OA API, napr. https://archiv.ravafol.sk/api  (bez /v1)
 let TOKEN = '';        // JWT accessToken
 let lastResults = [];
+const LIMIT = 25;
+let curPage = 1, curTotal = 0, curQuery = '', curFilters = {};
 
 const $ = (id) => document.getElementById(id);
 const show = (id) => { ['loginView', 'searchView', 'viewerView'].forEach(v => $(v).classList.toggle('hidden', v !== id)); };
@@ -87,23 +89,39 @@ function buildFilters() {
   return f;
 }
 
-async function doSearch() {
-  const q = $('query').value.trim();
-  const filters = buildFilters();
-  const hasF = Object.keys(filters).length > 0;
-  if (!q && !hasF) { $('status').textContent = 'Zadaj hľadaný výraz alebo filter.'; return; }
+function doSearch() {
+  curQuery = $('query').value.trim();
+  curFilters = buildFilters();
+  if (!curQuery && !Object.keys(curFilters).length) { $('status').textContent = 'Zadaj hľadaný výraz alebo filter.'; return; }
+  runSearch(1);
+}
+
+async function runSearch(page) {
+  curPage = page;
   $('status').textContent = 'Hľadám…';
-  $('results').innerHTML = '';
+  $('results').innerHTML = ''; $('pager').innerHTML = '';
   try {
-    let url = `/v1/search?keywords=${encodeURIComponent(q)}&page=1&limit=25`;
-    if (hasF) url += `&filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    let url = `/v1/search?keywords=${encodeURIComponent(curQuery)}&page=${page}&limit=${LIMIT}`;
+    if (Object.keys(curFilters).length) url += `&filters=${encodeURIComponent(JSON.stringify(curFilters))}`;
     const res = await api(url);
     if (!res.ok) { $('status').textContent = 'Chyba vyhľadávania.'; return; }
     const data = await res.json();
     lastResults = data.hits || [];
-    $('status').textContent = `Nájdené: ${data.total ?? lastResults.length}`;
+    curTotal = data.total ?? lastResults.length;
+    $('status').textContent = `Nájdené: ${curTotal}`;
     renderResults();
+    renderPager();
   } catch (e) { $('status').textContent = e.message; }
+}
+
+function renderPager() {
+  const p = $('pager'); p.innerHTML = '';
+  const pages = Math.ceil(curTotal / LIMIT);
+  if (pages <= 1) return;
+  const mk = (label, page, disabled) => { const b = document.createElement('button'); b.className = 'link'; b.textContent = label; b.disabled = disabled; b.style.opacity = disabled ? '.4' : '1'; if (!disabled) b.onclick = () => runSearch(page); return b; };
+  p.appendChild(mk('‹ Späť', curPage - 1, curPage <= 1));
+  const info = document.createElement('span'); info.className = 'muted'; info.style.margin = '0 10px'; info.textContent = `Strana ${curPage} / ${pages}`; p.appendChild(info);
+  p.appendChild(mk('Ďalej ›', curPage + 1, curPage >= pages));
 }
 
 function esc(s) { return (s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
